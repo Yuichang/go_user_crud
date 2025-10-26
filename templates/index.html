@@ -3,13 +3,34 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width = device-width,initial-scale=1.0">
     <title>ユーザー登録ページ</title>
-    <link rel="stylesheet" href="/static/style.css" </head>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
 
 <body>
-    <h1>ユーザーの登録ページです</h1>
+    <h1>ユーザーの登録ページです</h1><br>
 
-    <p><b>↓にフォームとかを書いてく </b></p>
+
+    <!-- ユーザー名、メールアドレスを入力するフォーム。後でform actionを設定する -->
+    <form action="#" method="post">
+
+        <label>ユーザー名(必須) :<br>
+            <input type="text" class="text_field" required name="name">
+        </label><br><br>
+
+        <label>メールアドレス: <br>
+            <input type="text" class="text_field" required name="mail">
+        </label><br><br>
+
+        <!-- 送信ボタン -->
+        <button type="submit" class="sub-button">登録する</button>
+
+    </form>
+
+
+    <!-- ユーザーが名が被っているとエラーを表示させる。被っていない場合は登録処理に入る -->
+
 
 </body>
 
