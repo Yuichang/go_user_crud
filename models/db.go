@@ -6,8 +6,7 @@ import (
 	"os"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv
-	"
+	"github.com/joho/godotenv"
 )
 
 func Connect() (*sql.DB, error) {
@@ -23,7 +22,7 @@ func Connect() (*sql.DB, error) {
 		User:   os.Getenv("DB_USER"),
 		Passwd: os.Getenv("DB_PASS"),
 		Net:    "tcp",
-		Addr:   os.Getenv("DB_ADDR"),
+		Addr:   os.Getenv("DB_ADDRESS"),
 		DBName: os.Getenv("DB_NAME"),
 	}
 
@@ -33,7 +32,7 @@ func Connect() (*sql.DB, error) {
 		return nil, err
 	}
 
-	if db.Ping() != nil {
+	if err := db.Ping(); err != nil {
 		db.Close()
 		fmt.Println("Ping error", err)
 		return nil, err

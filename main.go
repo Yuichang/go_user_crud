@@ -5,11 +5,21 @@ import (
 	"net/http"
 	"regexp"
 	"text/template"
+
+	"github.com/Yuichang/go_user_crud/models"
 )
 
 var resultTmpl = template.Must(template.ParseFiles("templates/result.html"))
 
 func main() {
+	db, err := models.Connect()
+	if err != nil {
+		log.Fatal("DB connect error:", err)
+	}
+
+	defer db.Close()
+	log.Println("Connection Success!")
+
 	// 静的ファイルのハンドラ
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
