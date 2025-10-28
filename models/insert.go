@@ -11,8 +11,10 @@ func (s *Server) InsertUser(name string, mail string) error {
 	defer tx.Rollback()
 
 	// 後でユーザーネームがユニークかチェックする
-	if _, err = tx.Exec("INSERT INTO users(name,mail)VALUES(?,?),name,mail"); err != nil {
-
+	if _, err = tx.Exec("INSERT INTO users (name,mail)VALUES(?,?)", name, mail); err != nil {
+		return fmt.Errorf("insert user error: %v", err)
 	}
+
+	return tx.Commit()
 
 }

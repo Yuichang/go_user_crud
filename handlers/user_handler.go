@@ -42,9 +42,10 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 結果のページの表示
-
 	if err := resultTmpl.Execute(w, data); err != nil {
 		http.Error(w, "テンプレートの描画に失敗しました", http.StatusInternalServerError)
 		return
 	}
+
+	//models.InsertUser(name, mail)
 }
