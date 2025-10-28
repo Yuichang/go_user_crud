@@ -9,6 +9,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type Server struct {
+	DB *sql.DB
+}
+
 func Connect() (*sql.DB, error) {
 	// 環境変数に.envファイルの内容を登録する
 	err := godotenv.Load()
