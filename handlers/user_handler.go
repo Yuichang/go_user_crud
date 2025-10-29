@@ -66,7 +66,7 @@ func MakeSubmitHandler(s *models.Server) http.HandlerFunc {
 		}{
 			Name:   name,
 			Mail:   mail,
-			Passwd: passwd,
+			Passwd: utils.EasyEncrypt(passwd),
 		}
 
 		// 結果のページの表示
