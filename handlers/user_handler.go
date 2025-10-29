@@ -29,6 +29,7 @@ func MakeSubmitHandler(s *models.Server) http.HandlerFunc {
 		// フォームの値の取得
 		name := r.FormValue("name")
 		mail := r.FormValue("mail")
+		passwd := r.FormValue("passwd")
 
 		// バリデーションチェック
 		if err_mes := utils.CheckValidation(name, mail); err_mes != "OK" {
@@ -52,17 +53,20 @@ func MakeSubmitHandler(s *models.Server) http.HandlerFunc {
 
 		// ユニークなので、DBにユーザー名とメールを挿入する
 		if err := s.InsertUser(name, mail); err != nil {
+			// メール認証もそうだけど、エラー出た時のhtmlファイルは用意する必要がある
 			http.Error(w, "DB登録に失敗しました: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		// テンプレートに渡すデータ
 		data := struct {
-			Name string
-			Mail string
+			Name   string
+			Mail   string
+			Passwd string
 		}{
-			Name: name,
-			Mail: mail,
+			Name:   name,
+			Mail:   mail,
+			Passwd: passwd,
 		}
 
 		// 結果のページの表示

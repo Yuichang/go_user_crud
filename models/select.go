@@ -8,6 +8,7 @@ import (
 func (s *Server) UserExistsByName(name string) (bool, error) {
 	var user User
 
+	// プレースホルダ用意するとSQL injection対策になる
 	row := s.DB.QueryRow("SELECT *FROM users WHERE name = ?", name)
 
 	err := row.Scan(&user.Name)

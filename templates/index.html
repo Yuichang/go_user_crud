@@ -12,16 +12,22 @@
     <h1>ユーザーの登録ページです</h1><br>
 
 
-    <!-- ユーザー名、メールアドレスを入力するフォーム。後でform actionを設定する -->
+    <!-- ユーザー名、メールアドレス、パスワードを入力するフォーム。後でform actionを設定する -->
     <form action="/submit" method="post">
 
-        <label>ユーザー名(必須) :<br>
+        <label>ユーザー名 :<br>
             <input type="text" class="text_field" required name="name">
         </label><br><br>
 
         <label>メールアドレス: <br>
             <input type="text" class="text_field" required name="mail">
         </label><br><br>
+
+        <label>パスワード :<br>
+            <input type="text" class="text_field" required name="passwd">
+        </label><br><br>
+
+
 
         <!-- 送信ボタン -->
         <button type="submit" class="sub-button">登録する</button>
