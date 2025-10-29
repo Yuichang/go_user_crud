@@ -36,10 +36,24 @@ func MakeSubmitHandler(s *models.Server) http.HandlerFunc {
 			return
 		}
 
-		// データベースに名前とメールアドレスを登録する
-		// 後で名前がユニークかどうか確認する
+		// 登録する予定のユーザー名がユニークか判定する
+		exists, err := s.UserExistsByName(name)
+
+		if err != nil {
+			http.Error(w, "ユーザー確認でエラーが発生しました: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// ユーザー名が既に存在している場合はエラーを出す
+		if exists {
+			http.Error(w, "その名前のユーザーは既に存在しています", http.StatusBadRequest)
+			return
+		}
+
+		// ユニークなので、DBにユーザー名とメールを挿入する
 		if err := s.InsertUser(name, mail); err != nil {
 			http.Error(w, "DB登録に失敗しました: "+err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		// テンプレートに渡すデータ
