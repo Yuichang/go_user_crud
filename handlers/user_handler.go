@@ -62,13 +62,13 @@ func MakeSubmitHandler(s *models.Server) http.HandlerFunc {
 
 		// テンプレートに渡すデータ
 		data := struct {
-			Name   string
-			Mail   string
-			Passwd string
+			Name         string
+			Mail         string
+			HashedPasswd string
 		}{
-			Name:   name,
-			Mail:   mail,
-			Passwd: hashedPasswd,
+			Name:         name,
+			Mail:         mail,
+			HashedPasswd: hashedPasswd,
 		}
 
 		// 結果のページの表示
