@@ -51,8 +51,10 @@ func MakeSubmitHandler(s *models.Server) http.HandlerFunc {
 			return
 		}
 
+		hashedPasswd := utils.EasyEncrypt(passwd)
+
 		// ユニークなので、DBにユーザー名とメールを挿入する
-		if err := s.InsertUser(name, mail); err != nil {
+		if err := s.InsertUser(name, mail, hashedPasswd); err != nil {
 			// メール認証もそうだけど、エラー出た時のhtmlファイルは用意する必要がある
 			http.Error(w, "DB登録に失敗しました: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -66,7 +68,7 @@ func MakeSubmitHandler(s *models.Server) http.HandlerFunc {
 		}{
 			Name:   name,
 			Mail:   mail,
-			Passwd: utils.EasyEncrypt(passwd),
+			Passwd: hashedPasswd,
 		}
 
 		// 結果のページの表示
