@@ -40,20 +40,46 @@ form {
     width: 100%;
     padding: 12px 16px;
     font-size: 16px;
-    background: #2d6cdf;
+    background: lightskyblue;
     color: #fff;
     border: none;
     border-radius: 8px;
     cursor: pointer;
 }
 
-@media (min-width: 600px) {
-    .sub-button {
-        width: auto;
-    }
-}
 
 a {
     text-decoration: none;
     color: inherit;
+}
+
+.index_container {
+    min-height: 100vh;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    padding: 40px 30px;
+    height: 28rem;
+    width: 36rem;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.actions {
+    margin-top: 4rem;
+}
+
+.actions form {
+    width: 16rem;
 }
