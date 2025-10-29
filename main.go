@@ -24,6 +24,8 @@ func main() {
 
 	// 各ページのハンドラ
 	http.HandleFunc("/", handlers.IndexHandler)
+	http.HandleFunc("/register",handlers.RegisterHandler)
+	http.HandleFunc("/login",handlers.LoginHandler)
 	http.HandleFunc("/submit", handlers.MakeSubmitHandler(s))
 
 	log.Println("Server Start...: http://localhost:8080")
