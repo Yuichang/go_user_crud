@@ -40,11 +40,12 @@ form {
     width: 100%;
     padding: 12px 16px;
     font-size: 16px;
-    background: #00acee;
+    background: dodgerblue;
     color: #fff;
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    font-family: sans-serif;
 }
 
 
@@ -80,8 +81,12 @@ a {
     border-radius: 16px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     padding: 80px 60px;
+    /*
     height: 40rem;
-    width: 36rem;
+    width: 36rem; 
+    */
+    height: 36rem;
+    width: 32rem;
 
     display: flex;
     flex-direction: column;
