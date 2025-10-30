@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"net/http"
 	"text/template"
 
@@ -32,7 +31,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // サインイン用のハンドラ
-func MakeSigninHandler(s *models.Server) http.HandlerFunc {
+func MakeSignupHandler(s *models.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// POSTメソッド以外はエラー処理
@@ -66,10 +65,15 @@ func MakeSigninHandler(s *models.Server) http.HandlerFunc {
 			return
 		}
 
-		hashedPasswd := utils.EasyEncrypt(passwd)
+		storedHash, err := utils.GenerateHash(passwd)
+
+		if err != nil {
+			http.Error(w, "Failed to hash password", http.StatusInternalServerError)
+		}
 
 		// ユニークなので、DBにユーザー名とメールを挿入する
-		if err := s.InsertUser(name, mail, hashedPasswd); err != nil {
+		if err := s.InsertUser(name, mail, storedHash); err != nil {
+
 			// メール認証もそうだけど、エラー出た時のhtmlファイルは用意する必要がある
 			http.Error(w, "Failed to register user: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -77,13 +81,13 @@ func MakeSigninHandler(s *models.Server) http.HandlerFunc {
 
 		// テンプレートに渡すデータ
 		data := struct {
-			Name         string
-			Mail         string
-			HashedPasswd string
+			Name       string
+			Mail       string
+			StoredHash string
 		}{
-			Name:         name,
-			Mail:         mail,
-			HashedPasswd: hashedPasswd,
+			Name:       name,
+			Mail:       mail,
+			StoredHash: storedHash,
 		}
 
 		// 結果のページの表示
@@ -106,27 +110,26 @@ func MakeLoginHandler(s *models.Server) http.HandlerFunc {
 
 		// フォームの値の取得
 		name := r.FormValue("name")
-		hashed_passwd := utils.EasyEncrypt(r.FormValue("passwd"))
+		passwd := r.FormValue("passwd")
 
-		// SQLを使って名前とパスワードが等しいかを判定
-
-		// 名前、ハッシュ化パスワードでDBを検索する
-		row := s.DB.QueryRow("SELECT id FROM users WHERE name = ? AND hashed_passwd = ?", name, hashed_passwd)
+		// 名前でDB検索してid,ハッシュ済みパスワードを持ってくる
+		row := s.DB.QueryRow("SELECT id,stored_hash FROM users WHERE name = ?", name)
 
 		var id int
-		err := row.Scan(&id)
+		var storedHash string
+		err := row.Scan(&id, &storedHash)
 
-		// 検索結果が空の場合（名前、パスワードの最低1つは間違っている）
-		if err == sql.ErrNoRows {
-			http.Error(w, "Invalid username or password.", http.StatusUnauthorized)
-			return
-		} else if err != nil {
-			// それ以外のDBエラー
+		// DBエラー
+		if err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		}
+
+		if !utils.VerifyPassword(passwd, storedHash) {
+			http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 			return
 		}
 
-		// ログイン成功なのでページを遷移させる
+		// 今後セッション認証にする
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 

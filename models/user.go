@@ -7,6 +7,7 @@ type User struct {
 	Name         string    // db->name
 	Email        string    // db->email
 	HashedPasswd string    // db->hashed_passwd
+	StoredHash   string    //db->stored_hash
 	CreatedAt    time.Time // db->created_at
 	UpdateAt     time.Time // db->updated_at
 }
