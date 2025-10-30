@@ -99,7 +99,8 @@ a {
 }
 
 .actions form {
-    width: 16rem;
+    width: 20rem;
+    margin-bottom: 5px;
 }
 
 .act {

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width = device-width,initial-scale=1.0">
+    <title>Account Created</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+
+<!-- まずは受け取ってデータを表示する -->
+
+<body>
+
+    <div class="index_container">
+
+        <div class="card2">
+
+            <h1>Created Success!!</h1><br><br>
+            <p><b>Username: </b> {{.Name}}</p><br>
+            <p><b>Email address: </b>{{.Mail}}</p><br>
+
+            <div class="actions">
+
+                <form action="/login" method="get">
+                    <button type="submit" class="sub-button">Go to Login</button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

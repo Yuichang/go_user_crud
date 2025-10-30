@@ -8,7 +8,7 @@ import (
 	"github.com/Yuichang/go_user_crud/utils"
 )
 
-var resultTmpl = template.Must(template.ParseFiles("templates/result.html"))
+var resultTmpl = template.Must(template.ParseFiles("templates/signup_success.html"))
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/index.html"))
