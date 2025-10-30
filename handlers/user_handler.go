@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"net/http"
 	"text/template"
 
@@ -25,12 +26,16 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
-// Serverを受け取ってhttp.HandleFuncを返す
-func MakeSubmitHandler(s *models.Server) http.HandlerFunc {
+func DashboardHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("templates/dashboard.html"))
+	tmpl.Execute(w, nil)
+}
 
+// サインイン用のハンドラ
+func MakeSigninHandler(s *models.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		// 一旦POSTメソッド以外はエラー処理
+		// POSTメソッド以外はエラー処理
 		if r.Method != http.MethodPost {
 			http.Error(w, "POSTメソッドで送信してください", http.StatusMethodNotAllowed)
 			return
@@ -86,6 +91,43 @@ func MakeSubmitHandler(s *models.Server) http.HandlerFunc {
 			http.Error(w, "テンプレートの描画に失敗しました", http.StatusInternalServerError)
 			return
 		}
-
 	}
+}
+
+// ログイン用のハンドラ
+
+func MakeLoginHandler(s *models.Server) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// POSTメソッド以外はエラー処理
+		if r.Method != http.MethodPost {
+			http.Error(w, "POSTメソッドで送信してください", http.StatusMethodNotAllowed)
+			return
+		}
+
+		// フォームの値の取得
+		name := r.FormValue("name")
+		hashed_passwd := utils.EasyEncrypt(r.FormValue("passwd"))
+
+		// SQLを使って名前とパスワードが等しいかを判定
+
+		// 名前、ハッシュ化パスワードでDBを検索する
+		row := s.DB.QueryRow("SELECT id FROM users WHERE name = ? AND hashed_passwd = ?", name, hashed_passwd)
+
+		var id int
+		err := row.Scan(&id)
+
+		// 検索結果が空の場合（名前、パスワードの最低1つは間違っている）
+		if err == sql.ErrNoRows {
+			http.Error(w, "Invalid username or password.", http.StatusUnauthorized)
+			return
+		} else if err != nil {
+			// それ以外のDBエラー
+			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// ログイン成功なのでページを遷移させる
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+	}
+
 }

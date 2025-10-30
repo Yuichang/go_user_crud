@@ -24,9 +24,11 @@ func main() {
 
 	// 各ページのハンドラ
 	http.HandleFunc("/", handlers.IndexHandler)
-	http.HandleFunc("/register",handlers.RegisterHandler)
-	http.HandleFunc("/login",handlers.LoginHandler)
-	http.HandleFunc("/submit", handlers.MakeSubmitHandler(s))
+	http.HandleFunc("/register", handlers.RegisterHandler)
+	http.HandleFunc("/login", handlers.LoginHandler)
+	http.HandleFunc("/login/submit", handlers.MakeLoginHandler(s))
+	http.HandleFunc("/dashboard", handlers.DashboardHandler)
+	http.HandleFunc("/submit", handlers.MakeSigninHandler(s))
 
 	log.Println("Server Start...: http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
