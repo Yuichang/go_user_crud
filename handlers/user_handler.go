@@ -37,7 +37,7 @@ func MakeSigninHandler(s *models.Server) http.HandlerFunc {
 
 		// POSTメソッド以外はエラー処理
 		if r.Method != http.MethodPost {
-			http.Error(w, "POSTメソッドで送信してください", http.StatusMethodNotAllowed)
+			http.Error(w, "Please use POST method", http.StatusMethodNotAllowed)
 			return
 		}
 
@@ -56,13 +56,13 @@ func MakeSigninHandler(s *models.Server) http.HandlerFunc {
 		exists, err := s.UserExistsByName(name)
 
 		if err != nil {
-			http.Error(w, "ユーザー確認でエラーが発生しました: "+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Error occurred checking existing user: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		// ユーザー名が既に存在している場合はエラーを出す
 		if exists {
-			http.Error(w, "その名前のユーザーは既に存在しています", http.StatusBadRequest)
+			http.Error(w, "This username already exists", http.StatusBadRequest)
 			return
 		}
 
@@ -71,7 +71,7 @@ func MakeSigninHandler(s *models.Server) http.HandlerFunc {
 		// ユニークなので、DBにユーザー名とメールを挿入する
 		if err := s.InsertUser(name, mail, hashedPasswd); err != nil {
 			// メール認証もそうだけど、エラー出た時のhtmlファイルは用意する必要がある
-			http.Error(w, "DB登録に失敗しました: "+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Failed to register user: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -88,7 +88,7 @@ func MakeSigninHandler(s *models.Server) http.HandlerFunc {
 
 		// 結果のページの表示
 		if err := resultTmpl.Execute(w, data); err != nil {
-			http.Error(w, "テンプレートの描画に失敗しました", http.StatusInternalServerError)
+			http.Error(w, "Failed to render template", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -98,9 +98,9 @@ func MakeSigninHandler(s *models.Server) http.HandlerFunc {
 
 func MakeLoginHandler(s *models.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// POSTメソッド以外はエラー処理
+		// POSTメソッド以外はリダイレクト
 		if r.Method != http.MethodPost {
-			http.Error(w, "POSTメソッドで送信してください", http.StatusMethodNotAllowed)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
