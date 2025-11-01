@@ -74,6 +74,7 @@ func MakeRegisterHandler(s *models.Server) http.HandlerFunc {
 
 		if err != nil {
 			http.Error(w, "Failed to hash password", http.StatusInternalServerError)
+			return
 		}
 
 		// ユニークなので、DBにユーザー名とメールを挿入する
@@ -127,6 +128,7 @@ func MakeLoginHandler(s *models.Server) http.HandlerFunc {
 		// DBエラー
 		if err != nil {
 			http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		if !utils.VerifyPassword(passwd, storedHash) {
@@ -139,6 +141,7 @@ func MakeLoginHandler(s *models.Server) http.HandlerFunc {
 			sess.Values["uid"] = id
 			if err := sess.Save(r, w); err != nil {
 				http.Error(w, "failed to save sesson", http.StatusInternalServerError)
+				return
 			}
 		}
 
