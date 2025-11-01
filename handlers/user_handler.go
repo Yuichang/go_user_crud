@@ -146,7 +146,7 @@ func MakeLoginHandler(s *models.Server) http.HandlerFunc {
 		}
 
 		// 今後セッション認証にする
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		http.Redirect(w, r, "/mypage", http.StatusSeeOther)
 	}
 }
 
@@ -155,6 +155,13 @@ func MakeLogoutHandler(store *sessions.CookieStore) http.HandlerFunc {
 		sess, _ := store.Get(r, utils.SessionName)
 		sess.Options.MaxAge = -1 //セッション削除
 		_ = sess.Save(r, w)
+
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
+
 	}
+}
+
+func MypageHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("templates/mypage.html"))
+	tmpl.Execute(w, nil)
 }

@@ -38,10 +38,12 @@ func main() {
 	http.HandleFunc("/register/submit", handlers.MakeRegisterHandler(s))
 
 	// 認証必須ページ
-	http.Handle("/dashboard", utils.AuthRequired(store, http.HandlerFunc(handlers.DashboardHandler)))
+	http.Handle("/mypage", utils.AuthRequired(store, http.HandlerFunc(handlers.MypageHandler)))
 
 	log.Println("Server Start...: http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
 }
+
+
