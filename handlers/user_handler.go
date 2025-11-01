@@ -223,3 +223,49 @@ func MakeDeleteHandler(s *models.Server)http.HandlerFunc{
 		http.Redirect(w,r,"/login",http.StatusSeeOther)
 	}
 }
+
+func EditNameFormHandler(w http.ResponseWriter, r *http.Request){
+	tmpl:=template.Must(template.ParseFiles("templates/edit_name.html"))
+	_=tmpl.Execute(w,nil)
+}
+
+// 処理を返す
+
+func MakeEditNameHandler(s *models.Server)http.HandlerFunc{
+	return func(w http.ResponseWriter, r *http.Request){
+		if r.Method != http.MethodPost{
+			http.Error(w,"Invalid request method",http.StatusMethodNotAllowed)
+			return
+		}
+
+		if sessionStore==nil{
+			http.Error(w,"sesson not ready",http.StatusInternalServerError)
+			return
+		}
+		sess,_:=sessionStore.Get(r,utils.SessionName)
+		uid,ok:=sess.Values["uid"].(int)
+
+		if !ok{
+			http.Redirect(w,r,"/login",http.StatusSeeOther)
+			return
+		}
+
+		newName := r.FormValue("name")
+		
+		isChange,err := s.UpdateNameByID(uid,newName)
+		if err!=nil{
+			http.Error(w,"failed to update name: "+err.Error(),http.StatusInternalServerError)
+			return
+		}
+
+		if !isChange{
+			http.Error(w,"user not found",http.StatusNotFound)
+			return
+		}
+
+		// 変更が成功した
+		http.Redirect(w,r,"/mypage",http.StatusSeeOther)
+
+	}
+
+}

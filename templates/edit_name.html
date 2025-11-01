@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Edit name</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="index_container">
+        <div class="card2">
+            <h2>Edit name</h2>
+
+            <form action="/edit_name/submit" method="post" onsubmit="return confirm('ユーザー名を変更しますか？')">
+                <label>New Username<br>
+                    <input type="text" class="text_field" required name="name">
+                </label><br><br>
+
+                <button type="submit" class="sub-button"> Edit</button>
+
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

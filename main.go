@@ -36,15 +36,15 @@ func main() {
 	http.HandleFunc("/login/submit", handlers.MakeLoginHandler(s))
 	http.HandleFunc("/logout", handlers.MakeLogoutHandler(store))
 	http.HandleFunc("/register/submit", handlers.MakeRegisterHandler(s))
-	http.HandleFunc("/delete",handlers.MakeDeleteHandler(s))
+	http.HandleFunc("/delete", handlers.MakeDeleteHandler(s))
+	http.HandleFunc("/edit_name/submit", handlers.MakeEditNameHandler(s))
 
 	// 認証必須ページ
-	http.Handle("/mypage", utils.AuthRequired(store, http.HandlerFunc(handlers.MakeMypageHandler(s))))
+	http.Handle("/mypage", utils.AuthRequired(store, handlers.MakeMypageHandler(s)))
+	http.Handle("/editname", utils.AuthRequired(store, http.HandlerFunc(handlers.EditNameFormHandler)))
 
 	log.Println("Server Start...: http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
 }
-
-
