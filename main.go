@@ -3,14 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
-	"github.com/joho/godotenv"
+
 	"github.com/Yuichang/go_user_crud/handlers"
 	"github.com/Yuichang/go_user_crud/models"
 	"github.com/Yuichang/go_user_crud/utils"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	_=godotenv.Load()
+	_ = godotenv.Load()
 	db, err := models.Connect()
 	if err != nil {
 		log.Fatal("DB connect error:", err)
@@ -37,7 +38,7 @@ func main() {
 	http.HandleFunc("/register/submit", handlers.MakeRegisterHandler(s))
 
 	// 認証必須ページ
-	http.HandleFunc("/dashboard", http.HandlerFunc(handlers.DashboardHandler))
+	http.Handle("/dashboard", utils.AuthRequired(store, http.HandlerFunc(handlers.DashboardHandler)))
 
 	log.Println("Server Start...: http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
