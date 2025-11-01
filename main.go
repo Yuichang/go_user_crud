@@ -36,6 +36,7 @@ func main() {
 	http.HandleFunc("/login/submit", handlers.MakeLoginHandler(s))
 	http.HandleFunc("/logout", handlers.MakeLogoutHandler(store))
 	http.HandleFunc("/register/submit", handlers.MakeRegisterHandler(s))
+	http.HandleFunc("/delete",handlers.MakeDeleteHandler(s))
 
 	// 認証必須ページ
 	http.Handle("/mypage", utils.AuthRequired(store, http.HandlerFunc(handlers.MakeMypageHandler(s))))

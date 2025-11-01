@@ -189,3 +189,37 @@ func MakeMypageHandler(s *models.Server) http.HandlerFunc {
 
 	}
 }
+
+func MakeDeleteHandler(s *models.Server)http.HandlerFunc{
+	return func(w http.ResponseWriter , r *http.Request){
+		if r.Method!=http.MethodPost{
+			http.Error(w,"Invalid request method",http.StatusMethodNotAllowed)
+			return
+		}
+
+		sess,_ := sessionStore.Get(r,utils.SessionName)
+		uid,ok:=sess.Values["uid"].(int)
+		if !ok{
+			http.Redirect(w,r,"/login",http.StatusSeeOther)
+			return
+		}
+
+		ok,err:=s.UserDeleteByID(uid)
+		if err!=nil{
+			http.Error(w,"Failed to delete user",http.StatusInternalServerError)
+			return
+		}
+
+		if !ok{
+			http.Error(w,"User not found",http.StatusNotFound)
+			return
+		}
+
+		// 削除完了
+		// セッション削除
+		sess.Options.MaxAge = -1
+		_=sess.Save(r,w)
+
+		http.Redirect(w,r,"/login",http.StatusSeeOther)
+	}
+}

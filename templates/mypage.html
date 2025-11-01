@@ -11,21 +11,32 @@
 
 <body>
 
-    <h1> your profile</h1>
-    <p>User name: {{.UserName}}</p>
+    <div class="index_container">
+        <div class="card2">
+            <h1> your profile</h1><br>
+            <p>User name: {{.UserName}}</p>
 
-    <div class="actions">
-        <form action="#" method="get">
-            <button type="submit" class="sub-button">
-                Edit
-            </button>
-        </form>
+            <div class="actions">
+                <form action="#" method="get">
+                    <button type="submit" class="sub-button">
+                        Edit
+                    </button>
+                </form>
 
-        <form action="/logout" method="post">
-            <button type="submit" class="sub-button">
-                Logout
-            </button>
-        </form>
+                <form action="/logout" method="post">
+                    <button type="submit" class="sub-button">
+                        Logout
+                    </button>
+                </form>
+
+                <form action="/delete" method="post" onsubmit="return confirm('本当に削除しますか？');">
+                    <button type="submit" class="sub-button" style="background-color:#e74c3c">
+                        Delete Account
+                    </button>
+                </form>
+
+            </div>
+        </div>
     </div>
 
 </body>
