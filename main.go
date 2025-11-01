@@ -3,12 +3,14 @@ package main
 import (
 	"log"
 	"net/http"
-
+	"github.com/joho/godotenv"
 	"github.com/Yuichang/go_user_crud/handlers"
 	"github.com/Yuichang/go_user_crud/models"
+	"github.com/Yuichang/go_user_crud/utils"
 )
 
 func main() {
+	_=godotenv.Load()
 	db, err := models.Connect()
 	if err != nil {
 		log.Fatal("DB connect error:", err)
@@ -18,6 +20,8 @@ func main() {
 	log.Println("Connection Success!")
 
 	s := models.NewServer(db)
+	store := utils.NewSessionStore()
+	handlers.SetSessionStore(store)
 
 	// 静的ファイルのハンドラ
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -26,9 +30,14 @@ func main() {
 	http.HandleFunc("/", handlers.IndexHandler)
 	http.HandleFunc("/register", handlers.RegisterHandler)
 	http.HandleFunc("/login", handlers.LoginHandler)
+
+	// 認証系
 	http.HandleFunc("/login/submit", handlers.MakeLoginHandler(s))
-	http.HandleFunc("/dashboard", handlers.DashboardHandler)
-	http.HandleFunc("/register/submit", handlers.MakeSignupHandler(s))
+	http.HandleFunc("/logout", handlers.MakeLogoutHandler(store))
+	http.HandleFunc("/register/submit", handlers.MakeRegisterHandler(s))
+
+	// 認証必須ページ
+	http.HandleFunc("/dashboard", http.HandlerFunc(handlers.DashboardHandler))
 
 	log.Println("Server Start...: http://localhost:8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {

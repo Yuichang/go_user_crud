@@ -6,7 +6,12 @@ import (
 
 	"github.com/Yuichang/go_user_crud/models"
 	"github.com/Yuichang/go_user_crud/utils"
+	"github.com/gorilla/sessions"
 )
+
+var sessionStore *sessions.CookieStore
+
+func SetSessionStore(s *sessions.CookieStore) { sessionStore = s }
 
 var resultTmpl = template.Must(template.ParseFiles("templates/signup_success.html"))
 
@@ -31,7 +36,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // サインイン用のハンドラ
-func MakeSignupHandler(s *models.Server) http.HandlerFunc {
+func MakeRegisterHandler(s *models.Server) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		// POSTメソッド以外はエラー処理
@@ -129,8 +134,24 @@ func MakeLoginHandler(s *models.Server) http.HandlerFunc {
 			return
 		}
 
+		if sessionStore != nil {
+			sess, _ := sessionStore.Get(r, utils.SessionName)
+			sess.Values["uid"] = id
+			if err := sess.Save(r, w); err != nil {
+				http.Error(w, "failed to save sesson", http.StatusInternalServerError)
+			}
+		}
+
 		// 今後セッション認証にする
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
+}
 
+func MakeLogoutHandler(store *sessions.CookieStore) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sess, _ := store.Get(r, utils.SessionName)
+		sess.Options.MaxAge = -1 //セッション削除
+		_ = sess.Save(r, w)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
 }
