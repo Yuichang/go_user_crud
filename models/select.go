@@ -20,3 +20,14 @@ func (s *Server) UserExistsByName(name string) (bool, error) {
 		return true, nil
 	}
 }
+
+// 引数のユーザーIDのユーザー名を返す
+func (s *Server) ReturnNameByID(ID int) (string, error) {
+	var name string
+	row := s.DB.QueryRow("SELECT name FROM users WHERE ID = ?", ID)
+	err := row.Scan(&name)
+	if err != nil {
+		return "", err
+	}
+	return name, nil
+}

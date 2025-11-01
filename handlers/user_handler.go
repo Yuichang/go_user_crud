@@ -161,7 +161,31 @@ func MakeLogoutHandler(store *sessions.CookieStore) http.HandlerFunc {
 	}
 }
 
-func MypageHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/mypage.html"))
-	tmpl.Execute(w, nil)
+func MakeMypageHandler(s *models.Server) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if sessionStore == nil {
+			http.Error(w, "session not ready", http.StatusInternalServerError)
+			return
+		}
+
+		sess, _ := sessionStore.Get(r, utils.SessionName)
+		uid, ok := sess.Values["uid"].(int)
+
+		if !ok {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		name, err := s.ReturnNameByID(uid)
+		if err != nil {
+			http.Error(w, "failed to fetch user name", http.StatusInternalServerError)
+			return
+		}
+
+		tmpl := template.Must(template.ParseFiles("templates/mypage.html"))
+		_ = tmpl.Execute(w, map[string]any{
+			"UserName": name,
+		})
+
+	}
 }
